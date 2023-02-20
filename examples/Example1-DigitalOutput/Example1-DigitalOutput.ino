@@ -14,7 +14,7 @@
   Watch each LED turn on one-at-a-time
 */
 
-#include <SparkFun_PCA9536_Arduino_Library.h>
+#include <PCA9536D.h>
 
 PCA9536 io;
 
