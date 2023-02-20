@@ -168,7 +168,7 @@ PCA9536_error_t PCA9536::readI2CBuffer(uint8_t *dest, PCA9536_REGISTER_t startRe
     }
 
     _i2cPort->requestFrom((uint8_t)_deviceAddress, (uint8_t)len);
-    for (int i = 0; i < len; i++)
+    for (int i = 0; i < (int)len; i++)
     {
         dest[i] = _i2cPort->read();
     }
@@ -184,7 +184,7 @@ PCA9536_error_t PCA9536::writeI2CBuffer(uint8_t *src, PCA9536_REGISTER_t startRe
     }
     _i2cPort->beginTransmission((uint8_t)_deviceAddress);
     _i2cPort->write(startRegister);
-    for (int i = 0; i < len; i++)
+    for (int i = 0; i < (int)len; i++)
     {
         _i2cPort->write(src[i]);
     }
