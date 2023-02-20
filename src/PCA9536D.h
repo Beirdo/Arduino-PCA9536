@@ -89,9 +89,6 @@ public:
     bool begin(TwoWire &wirePort = Wire);
     bool isConnected();
 
-    // setDebugStream to enable library debug statements
-    void setDebugStream(Stream &debugPort = Serial);
-
     // pinMode can set a pin (0-3) to INPUT or OUTPUT
     PCA9536_error_t pinMode(uint8_t pin, uint8_t mode);
 
@@ -112,7 +109,6 @@ public:
 
 private:
     TwoWire *_i2cPort; //The generic connection to user's chosen I2C hardware
-    Stream *_debugPort;
     PCA9536_Address_t _deviceAddress;
 
     // I2C Read/Write

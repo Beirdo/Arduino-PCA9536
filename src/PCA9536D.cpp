@@ -21,30 +21,12 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <SparkFun_PCA9536_Arduino_Library.h>
+#include <PCA9536D.h>
 
-#ifdef DEBUG_PCA9536
-#define PCA9536_DEBUG(x)      \
-    if (_debugPort != NULL)   \
-    {                         \
-        _debugPort->print(x); \
-    }
-#define PCA9536_DEBUGLN(x)      \
-    if (_debugPort != NULL)     \
-    {                           \
-        _debugPort->println(x); \
-    }
-#define STORAGE(x) (x)
-#else
-#define PCA9536_DEBUG(x)
-#define PCA9536_DEBUGLN(x)
-#define STORAGE(x) (x)
-#endif
 
 PCA9536::PCA9536()
 {
     _i2cPort = NULL;
-    _debugPort = NULL;
     _deviceAddress = PCA9536_ADDRESS_INVALID;
 }
 
@@ -61,11 +43,6 @@ boolean PCA9536::isConnected(void)
 {
     _i2cPort->beginTransmission((uint8_t)_deviceAddress);
     return (_i2cPort->endTransmission() == 0);
-}
-
-void PCA9536::setDebugStream(Stream &debugPort)
-{
-    _debugPort = &debugPort;
 }
 
 PCA9536_error_t PCA9536::pinMode(uint8_t pin, uint8_t mode)
@@ -179,18 +156,14 @@ PCA9536_error_t PCA9536::revert(uint8_t pin)
 
 PCA9536_error_t PCA9536::readI2CBuffer(uint8_t *dest, PCA9536_REGISTER_t startRegister, uint16_t len)
 {
-    PCA9536_DEBUGLN((STORAGE("(readI2CBuffer): read ") + String(len) +
-                     STORAGE(" @ 0x") + String(startRegister, HEX)));
     if (_deviceAddress == PCA9536_ADDRESS_INVALID)
     {
-        PCA9536_DEBUGLN(STORAGE("    ERR (readI2CBuffer): Invalid address"));
         return PCA9536_ERROR_INVALID_ADDRESS;
     }
     _i2cPort->beginTransmission((uint8_t)_deviceAddress);
     _i2cPort->write(startRegister);
     if (_i2cPort->endTransmission(false) != 0)
     {
-        PCA9536_DEBUGLN(STORAGE("    ERR (readI2CBuffer): End transmission"));
         return PCA9536_ERROR_READ;
     }
 
@@ -198,7 +171,6 @@ PCA9536_error_t PCA9536::readI2CBuffer(uint8_t *dest, PCA9536_REGISTER_t startRe
     for (int i = 0; i < len; i++)
     {
         dest[i] = _i2cPort->read();
-        PCA9536_DEBUGLN((STORAGE("    ") + String(i) + STORAGE(": 0x") + String(dest[i], HEX)));
     }
 
     return PCA9536_ERROR_SUCCESS;
@@ -208,7 +180,6 @@ PCA9536_error_t PCA9536::writeI2CBuffer(uint8_t *src, PCA9536_REGISTER_t startRe
 {
     if (_deviceAddress == PCA9536_ADDRESS_INVALID)
     {
-        PCA9536_DEBUGLN(STORAGE("ERR (readI2CBuffer): Invalid address"));
         return PCA9536_ERROR_INVALID_ADDRESS;
     }
     _i2cPort->beginTransmission((uint8_t)_deviceAddress);
